@@ -1,0 +1,7 @@
+#Internal package file, do not edit.
+#Tue Feb 05 03:06:50 IST 2019
+0.baseType=DIRECTORY
+0.base=E\:\\AndroidProjects\\CancerDetetion\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+0.path=classes.dex
+0.set=DEX
+count=1
