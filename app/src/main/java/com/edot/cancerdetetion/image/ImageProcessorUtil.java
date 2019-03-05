@@ -1,6 +1,7 @@
 package com.edot.cancerdetetion.image;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 public class ImageProcessorUtil {
@@ -114,13 +115,12 @@ public class ImageProcessorUtil {
 
                 // Get pixels
                 red = getRed(original.getPixel(i, j));
-                int alpha = getAlpha(original.getPixel(i, j));
                 if (red > threshold) {
                     newPixel = 0;
                 } else {
                     newPixel = 255;
                 }
-                newPixel = groupToPixel(alpha, newPixel, newPixel, newPixel);
+                newPixel = groupToPixel(0xFF, newPixel, newPixel, newPixel);
                 original.setPixel(i, j, newPixel);
             }
         }
@@ -161,6 +161,76 @@ public class ImageProcessorUtil {
                 ((r & 0xFF) << 16) |
                 ((g & 0xFF) << 8)  |
                 ((b & 0xFF));
+    }
+
+    public static float getBinaryImagePerimeter(@NonNull Bitmap bitmap)
+    {
+        float perimeter = 0;
+        for (int y = 0; y < bitmap.getHeight(); y++) {
+            for (int x = 0; x < bitmap.getWidth(); x++) {
+                if (bitmap.getPixel(x,y) == 0xFF000000 || bitmap.getPixel(x,y) == -1) {
+                    int targetPixel = bitmap.getPixel(x, y);
+
+                    int topPixel = (y == 0) ? 0xFF000000 : bitmap.getPixel(x,y-1);
+                    int bottomPixel = (y == bitmap.getHeight() - 1) ? 0xFF000000 : bitmap.getPixel(x,y+1);
+
+                    int leftPixel = (x == 0) ? 0xFF000000 : bitmap.getPixel(x-1,y);
+                    int rightPixel = (x == bitmap.getWidth() - 1) ? 0xFF000000 : bitmap.getPixel(x+1,y);
+
+                    if ((targetPixel == -1) && (rightPixel == 0xFF000000 || leftPixel == 0xFF000000
+                            || bottomPixel == 0xFF000000 || topPixel == 0xFF000000)) {
+                        perimeter++;
+                    }
+                }
+                else
+                {
+                    throw new IllegalArgumentException("Image provided is not binary");
+                }
+            }
+        }
+        return perimeter;
+    }
+
+    public static float asym(@NonNull Bitmap bitmap)
+    {
+        float asym;
+        float newInt = 0;
+
+        for (int i = 0; i < bitmap.getWidth(); i++) {
+            for (int j = 0; j < bitmap.getHeight(); j++) {
+
+               if (getRed(bitmap.getPixel(i,j)) != 255)
+               {
+                   newInt++;
+               }
+
+            }
+        }
+        asym = newInt/(float) bitmap.getWidth();
+        return asym;
+    }
+
+    public static float calculteArea(@NonNull Bitmap bitmap)
+    {
+        float newInt = 0;
+
+        for (int i = 0; i < bitmap.getWidth(); i++) {
+            for (int j = 0; j < bitmap.getHeight(); j++) {
+
+                if (bitmap.getPixel(i,j) == -1)
+                {
+                    newInt++;
+                }
+
+            }
+        }
+        return newInt;
+    }
+
+
+    public static boolean classify(float solidity, float extend)
+    {
+        return (solidity/(float) extend) >= 0.95f;
     }
 
 }

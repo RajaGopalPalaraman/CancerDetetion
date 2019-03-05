@@ -1,0 +1,4 @@
+#Tue Mar 05 13:25:33 IST 2019
+base.0=E\:\\AndroidProjects\\CancerDetetion\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\1
+path.0=classes.dex
+renamed.0=classes.dex
